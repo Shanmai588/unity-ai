@@ -15,6 +15,9 @@ MonoBehaviour:
   stateConfigs:
   - stateName: 
     stateType: 0
-    enterConditions: []
+    enterConditions:
+    - id: health
+      priority: 1
+      conditionData: {fileID: 11400000, guid: 4e122fc11c6a21947b84457dd315cca0, type: 2}
     exitConditions: []
   transitionConfigs: []

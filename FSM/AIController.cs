@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using AI.FSM;
 using GenericGameplayInterface;
 using UnityEngine;
@@ -5,52 +7,56 @@ using UnityEngine;
 namespace AI.Controller
 {
     /// <summary>
-    /// AI Controller would take over if target is not under command
+    ///     AI Controller would take over if target is not under command
     /// </summary>
     public class AIController : MonoBehaviour
     {
-        private StateMachine stateMachine;
-        [SerializeField] private AIConfigData aiConfig;
-        private IHealth healthComponent;
-        private IMover moverComponent;
+        [SerializeField] private AIConfigData aiConfigData;
         private IAttacker attackerComponent;
         private IDetector detectorComponent;
+        private IHealth healthComponent;
+        private IMover moverComponent;
+        private StateMachine stateMachine;
         private Transform target;
-        private Vector3 targetDestination;
-        
-        public Vector3 TargetDestination => targetDestination;
+        private AIConfig aiConfig;
+        public Vector3 TargetDestination { get; }
+        private readonly Dictionary<Type, object> _cached = new();
 
-        void Start()
+        private void Start()
         {
             // Get components
-            healthComponent = GetComponent<IHealth>();
-            moverComponent = GetComponent<IMover>();
-            attackerComponent = GetComponent<IAttacker>();
-            detectorComponent = GetComponent<IDetector>();
-            
+            healthComponent = GetCached<IHealth>();
+            moverComponent = GetCached<IMover>();
+            attackerComponent = GetCached<IAttacker>();
+            detectorComponent = GetCached<IDetector>();
+
             // Initialize state machine
             stateMachine = new StateMachine();
+            aiConfig = AIConfigProvider.GetConfig(aiConfigData);
             stateMachine.Initialize(aiConfig, this);
         }
-        
-        void Update()
+
+        private void Update()
         {
             // Update state machine
             stateMachine.Update();
         }
         
         /// <summary>
-        ///     Ensure Getting Same Component
+        /// Get a component or interface, cached after first lookup.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public new T GetComponent<T>()
+        public T GetCached<T>() where T : class          // ① constrain T to a reference type
         {
-            if (typeof(T) == typeof(IHealth)) return (T)healthComponent;
-            if (typeof(T) == typeof(IMover)) return (T)moverComponent;
-            if (typeof(T) == typeof(IAttacker)) return (T)attackerComponent;
-            if (typeof(T) == typeof(IDetector)) return (T)detectorComponent;
-            return base.GetComponent<T>();
+            var key = typeof(T);
+
+            if (_cached.TryGetValue(key, out var obj))
+                return (T)obj;                           // ② cast from object, not Component
+
+            // plain GetComponent(Type) returns Component – we cast *via* object
+            var found = base.GetComponent(key) as T;
+            _cached[key] = found;
+            return found;
         }
+
     }
 }

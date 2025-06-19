@@ -1,43 +1,27 @@
-using System.Collections.Generic;
 using AI.Controller;
 
 namespace AI.Condition
 {
-    public class ConditionManager
+    public static class ConditionManager
     {
-        private readonly Dictionary<ConditionType, ICondition> conditions;
-
-        public ConditionManager()
+        public static bool EvaluateCondition(ICondition config, AIController context)
         {
-            conditions = new Dictionary<ConditionType, ICondition>();
-            RegisterDefaultConditions();
+            // if (config.subConditions != null && config.subConditions.Length > 0)
+            //     return EvaluateLogicGroup(config.subConditions, context);
+
+            return config.Evaluate(context);
+        }
+        
+        public static bool EvaluateCondition(ConditionConfigData config, AIController context)
+        {
+            // if (config.subConditions != null && config.subConditions.Length > 0)
+            //     return EvaluateLogicGroup(config.subConditions, context);
+
+            return config.conditionData.Evaluate(context);
         }
 
-        private void RegisterDefaultConditions()
-        {
-            // RegisterCondition(ConditionType.Health, new HealthCondition());
-            // RegisterCondition(ConditionType.Distance, new DistanceCondition());
-            // RegisterCondition(ConditionType.Command, new CommandCondition());
-            // RegisterCondition(ConditionType.Timer, new TimerCondition());
-        }
-
-        public void RegisterCondition(ConditionType type, ICondition condition)
-        {
-            conditions[type] = condition;
-        }
-
-        public bool EvaluateCondition(ConditionConfigData config, AIController context)
-        {
-            if (!conditions.TryGetValue(config.conditionType, out var condition))
-                return false;
-
-            if (config.subConditions != null && config.subConditions.Length > 0)
-                return EvaluateLogicGroup(config.subConditions, context);
-
-            return condition.Evaluate(config.data, context);
-        }
-
-        public bool EvaluateConditions(ConditionConfigData[] configs, LogicOperator @operator, AIController context)
+        public static bool EvaluateConditions(ConditionConfigData[] configs, LogicOperator @operator,
+            AIController context)
         {
             if (configs == null || configs.Length == 0) return true;
 
@@ -63,11 +47,11 @@ namespace AI.Condition
             }
         }
 
-        private bool EvaluateLogicGroup(ConditionConfigData[] configs, AIController context)
-        {
-            if (configs.Length == 0) return true;
-            var firstConfig = configs[0];
-            return EvaluateConditions(configs, firstConfig.logicOperator, context);
-        }
+        // private static bool EvaluateLogicGroup(ConditionConfigData[] configs, AIController context)
+        // {
+        //     if (configs.Length == 0) return true;
+        //     var firstConfig = configs[0];
+        //     return EvaluateConditions(configs, firstConfig.logicOperator, context);
+        // }
     }
 }

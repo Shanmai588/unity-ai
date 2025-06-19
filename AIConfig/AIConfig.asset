@@ -16,35 +16,11 @@ MonoBehaviour:
   - stateName: Moving
     stateType: 1
     enterConditions:
-    - name: das
-      conditionType: 0
+    - id: 
       priority: 0
-      logicOperator: 0
-      subConditions: []
-      data:
-        expectedValue:
-          type: 2
-          floatValue: 0
-          intValue: 0
-          boolValue: 1
-          stringValue: 
-        operator: 0
-        parameters: []
-        target: 3
+      conditionData: {fileID: 0}
     exitConditions:
-    - name: 
-      conditionType: 0
+    - id: 
       priority: 0
-      logicOperator: 0
-      subConditions: []
-      data:
-        expectedValue:
-          type: 0
-          floatValue: 0
-          intValue: 0
-          boolValue: 0
-          stringValue: 
-        operator: 0
-        parameters: []
-        target: 0
+      conditionData: {fileID: 11400000, guid: 4e122fc11c6a21947b84457dd315cca0, type: 2}
   transitionConfigs: []

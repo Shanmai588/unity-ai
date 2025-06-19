@@ -7,21 +7,19 @@ namespace AI.FSM
 {
     public class StateMachine
     {
-        private ConditionManager conditionManager;
         private AIController controller;
         private State currentState;
         private Dictionary<string, State> states;
-        public AIConfigData config { get; private set; }
+        public AIConfig config { get; private set; }
 
-        public void Initialize(AIConfigData config, AIController controller)
+        public void Initialize(AIConfig config, AIController controller)
         {
             this.config = config;
             this.controller = controller;
-            conditionManager = new ConditionManager();
             states = new Dictionary<string, State>();
 
             // Create states based on config
-            foreach (var stateConfig in config.stateConfigs)
+            foreach (var stateConfig in config.GetStateConfigs())
             {
                 State state = null;
                 switch (stateConfig.stateType)
@@ -64,7 +62,7 @@ namespace AI.FSM
             var transitions = config.GetTransitions(from);
             foreach (var transition in transitions)
                 if (transition.toState == to)
-                    return conditionManager.EvaluateConditions(
+                    return ConditionManager.EvaluateConditions(
                         transition.conditions,
                         transition.logicOperator,
                         controller);

@@ -1,13 +1,10 @@
-using System;
+using AI.Controller;
+using UnityEngine;
 
 namespace AI.Condition
 {
-    [Serializable]
-    public class ConditionData
+    public abstract class ConditionData : ScriptableObject, ICondition
     {
-        public DataValue expectedValue;
-        public ComparisonOperator @operator;
-        public string[] parameters;
-        public TargetType target;
+        public abstract bool Evaluate(AIController context);
     }
 }

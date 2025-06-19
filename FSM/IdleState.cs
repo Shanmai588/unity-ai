@@ -5,8 +5,10 @@ namespace AI.FSM
 {
     public class IdleState : State
     {
-        public IdleState(StateMachine machine, AIController controller) 
-            : base("Idle", machine, controller) { }
+        public IdleState(StateMachine machine, AIController controller)
+            : base("Idle", machine, controller)
+        {
+        }
 
         public override void Enter()
         {
@@ -23,14 +25,11 @@ namespace AI.FSM
         {
             var transitions = stateMachine.config.GetTransitions(stateName);
             foreach (var transition in transitions)
-            {
                 if (stateMachine.CanTransition(stateName, transition.toState))
                 {
                     stateMachine.ChangeState(transition.toState);
                     break;
                 }
-            }
         }
     }
-
 }
